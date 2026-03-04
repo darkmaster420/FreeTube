@@ -32,7 +32,19 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=production
-    # Runs the full web production build; output goes to ./dist
+    # Runs the full web production build; output goes to ./dist/web
     command: yarn pack:web
     profiles:
       - build
+
+  freetube-web:
+    image: nginx:alpine
+    container_name: freetube-web
+    volumes:
+      # Serve the production web bundle built by freetube-build
+      - ./dist/web:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "8080:80"
+    profiles:
+      - serve

@@ -17,7 +17,7 @@ Available for Windows (10 and later), Mac (macOS 12 and later) & Linux thanks to
 </p>
 
 <hr>
-<p align="center"><a href="#screenshots">Screenshots</a> &bull; <a href="#how-does-it-work">How does it work?</a> &bull; <a href="#features">Features</a> &bull; <a href="#download-links">Download Links</a> &bull; <a href="#contributing">Contributing</a> &bull; <a href="#localization">Localization</a> &bull; <a href="#contact">Contact</a> &bull; <a href="#donate">Donate</a> &bull; <a href="#license">License</a></p>
+<p align="center"><a href="#screenshots">Screenshots</a> &bull; <a href="#how-does-it-work">How does it work?</a> &bull; <a href="#features">Features</a> &bull; <a href="#download-links">Download Links</a> &bull; <a href="#self-hosting">Self-Hosting</a> &bull; <a href="#contributing">Contributing</a> &bull; <a href="#localization">Localization</a> &bull; <a href="#contact">Contact</a> &bull; <a href="#donate">Donate</a> &bull; <a href="#license">License</a></p>
 <p align="center"><a href="https://freetubeapp.io/">Website</a> &bull; <a href="https://blog.freetubeapp.io/">Blog</a> &bull; <a href="https://docs.freetubeapp.io/">Documentation</a> &bull; <a href="https://docs.freetubeapp.io/faq/">FAQ</a> &bull; <a href="https://github.com/FreeTubeApp/FreeTube/discussions">Discussions</a></p>
 <hr>
 
@@ -138,6 +138,56 @@ The first build with a green check mark is the latest build.
 * WAPT: [Download](https://wapt.tranquil.it/store/en/tis-freetube)
 
 * Windows Package Manager (winget): [Usage](https://docs.microsoft.com/en-us/windows/package-manager/winget/)
+
+## Self-Hosting
+
+FreeTube includes a web mode that compiles to a fully static single-page application (SPA) and can be self-hosted on your own server. All user data (subscriptions, playlists, history) is stored in the browser's local storage — no server-side components are required.
+
+### Using Docker (recommended)
+
+**1. Build the production web assets:**
+
+```sh
+docker compose --profile build run freetube-build
+```
+
+This creates a production-ready static bundle in `dist/web/`.
+
+**2. Serve the built files with nginx:**
+
+```sh
+docker compose --profile serve up freetube-web
+```
+
+FreeTube will be available at `http://localhost:8080`.
+
+### Without Docker
+
+**1. Install dependencies:**
+
+```sh
+yarn install --frozen-lockfile
+```
+
+**2. Build the production web bundle:**
+
+```sh
+yarn pack:web
+```
+
+**3. Serve** the `dist/web/` directory with any static web server that supports SPA fallback routing (e.g. nginx, Caddy, Apache). An example nginx configuration is provided in [`nginx.conf`](nginx.conf) at the root of the repository.
+
+### Docker Compose reference
+
+| Task | Command |
+|---|---|
+| Start web dev server (hot-reload) | `docker compose up freetube-dev` |
+| Run a production web build | `docker compose --profile build run freetube-build` |
+| Serve the production build | `docker compose --profile serve up freetube-web` |
+| Rebuild the Docker image | `docker compose build` |
+
+> [!NOTE]
+> The `freetube-web` service requires the `dist/web/` directory to exist. Run the `freetube-build` step first.
 
 ## Contributing
 Thank you very much to the [People and Projects](https://docs.freetubeapp.io/credits/) that make FreeTube possible!

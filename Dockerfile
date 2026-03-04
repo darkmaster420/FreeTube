@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:22-alpine
 
 # Install dependencies for native modules and yarn
 RUN apk add --no-cache git python3 make g++
